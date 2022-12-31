@@ -1,0 +1,7 @@
+.app {
+    background: linear-gradient( 120deg,#000b1a, #000000);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
