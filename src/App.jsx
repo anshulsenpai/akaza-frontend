@@ -13,11 +13,18 @@ import Success from '../src/Pages/Success'
 import { useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useEffect } from 'react';
+import axios from 'axios';
 
 function App() {
   const user = useSelector(state => state.user)
   const isUser = user.currentUser ? true : false
   // getting API call 
+
+  useEffect(() => {
+    axios.get('https://akaza-games-api.onrender.com/products')
+  })
+
   return (
     <div className="app">
       <Announcement />
