@@ -20,18 +20,13 @@ import { useState } from 'react';
 function App() {
   const user = useSelector(state => state.user)
   const isUser = user.currentUser ? true : false
-  const [data, setData] = useState()
-  // getting API call 
 
   useEffect(async () => {
     const res = await axios.get('https://akaza-games-api.onrender.com/products')
-    setData(res)
   })
 
   return (
-
-    
-    data && <div className="app">
+    <div className="app">
       <Announcement />
       <Navbar />
       <Routes>
