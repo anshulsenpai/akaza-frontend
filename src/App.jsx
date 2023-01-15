@@ -15,18 +15,23 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEffect } from 'react';
 import axios from 'axios';
+import { useState } from 'react';
 
 function App() {
   const user = useSelector(state => state.user)
   const isUser = user.currentUser ? true : false
+  const [data, setData] = useState()
   // getting API call 
 
-  useEffect(() => {
-    axios.get('https://akaza-games-api.onrender.com/products')
+  useEffect(async () => {
+    const res = await axios.get('https://akaza-games-api.onrender.com/products')
+    setData(res)
   })
 
   return (
-    <div className="app">
+
+    
+    data && <div className="app">
       <Announcement />
       <Navbar />
       <Routes>
