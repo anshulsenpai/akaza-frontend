@@ -1,9 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { login } from '../redux/apiCalls'
 import { useDispatch, useSelector } from 'react-redux'
+
 
 const Login = () => {
     const [username, setUsername] = useState("")
@@ -11,9 +12,10 @@ const Login = () => {
     const dispatch = useDispatch();
     const userSlice = useSelector((state) => state);
     const { isFetching } = userSlice.user
+    const navigate = useNavigate()
     const handleClick = (e) => {
         e.preventDefault();
-        login(dispatch, { username, password });
+        login(dispatch, { username, password }, navigate);
     };
 
     return (

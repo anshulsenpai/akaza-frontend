@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import ArrowBackIosOutlinedIcon from '@mui/icons-material/ArrowBackIosOutlined';
 import ArrowForwardIosOutlinedIcon from '@mui/icons-material/ArrowForwardIosOutlined';
 import { SliderData } from '../Data/Data'
+import { useNavigate } from 'react-router-dom';
 
 const SliderDataLength = SliderData.length
 
@@ -31,6 +32,11 @@ const Slider = () => {
     }, 6000)
   }, [])
 
+  const navigate = useNavigate()
+  const handleShowNow = () => {
+    navigate("/shop")
+  }
+
   return (
     <Container>
       <Arrow direction='left' onClick={() => handleArrow('back')}>
@@ -46,7 +52,7 @@ const Slider = () => {
               <InfoContainer>
                 <Title>{data.title}</Title>
                 <Desc>{data.desc}</Desc>
-                <Button>SHOW NOW</Button>
+                <Button onClick={handleShowNow}>SHOW NOW</Button>
               </InfoContainer>
             </Slide>
           ))

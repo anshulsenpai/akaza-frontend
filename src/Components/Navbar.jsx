@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Badge } from '@mui/material';
 import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux';
 import { logOut } from '../redux/userSlice';
 import { useDispatch } from 'react-redux';
@@ -15,12 +15,14 @@ const Navbar = () => {
     const handleSlideBar = () => {
         setIsActive(!isActive)
     }
+    const navigate = useNavigate()
 
     const quantity = useSelector(state => state.cart.quantity)
     const currentUser = useSelector(state => state.user.currentUser)
     const dispatch = useDispatch()
     const onLogOut = () => {
         dispatch(logOut())
+        navigate('/');
     }
 
     return (
