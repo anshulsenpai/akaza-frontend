@@ -1,114 +1,112 @@
-import React, { useState } from 'react'
-import styled from 'styled-components'
+import React, { useState } from "react";
+import styled from "styled-components";
 // import game1 from '../Assets/game1.webp'
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import DeleteIcon from "@mui/icons-material/Delete";
 // import { GameData } from '../Data/Data';
-import { useSelector, useDispatch } from 'react-redux'
-import {clearCart, decreaseQuantity, increaseQuantity, removeProduct } from '../redux/cartSlice'
-import StripeCheckout from 'react-stripe-checkout'
-import game5 from '../Assets/game5.webp'
-import { useEffect } from 'react';
-import { BASE_URL, userRequest } from '../ReqMethods';
+import { useSelector, useDispatch } from "react-redux";
+import {
+  clearCart,
+  decreaseQuantity,
+  increaseQuantity,
+  removeProduct,
+} from "../redux/cartSlice";
+import StripeCheckout from "react-stripe-checkout";
+import game5 from "../Assets/game5.webp";
+import { useEffect } from "react";
+import { BASE_URL, userRequest } from "../ReqMethods";
 import { useNavigate } from "react-router-dom";
-import { notify } from '../notification/Toastify';
+import { notify } from "../notification/Toastify";
 
 const Cart = () => {
   const dispatch = useDispatch();
-
-  const cart = useSelector(state => state.cart)
+  const user = useSelector((state) => state.user);
+  const isUser = user.currentUser ? true : false;
+  const cart = useSelector((state) => state.cart);
   // console.log("cart =>", cart)
-  const subtotal = cart.total
-  const cartQuantity = cart.quantity
-  const { products } = cart
-  const [stripeToken, setStripeToken] = useState(null)
+  const subtotal = cart.total;
+  const cartQuantity = cart.quantity;
+  const { products } = cart;
+  const [stripeToken, setStripeToken] = useState(null);
   const navigate = useNavigate();
   const KEY = process.env.REACT_APP_STRIPE;
 
   // removeProduct
   const handleDelete = (item) => {
-    dispatch(
-      removeProduct(item)
-    )
-  }
+    dispatch(removeProduct(item));
+  };
 
   const handleClearCart = () => {
-    dispatch(
-      clearCart()
-    )
-  }
+    dispatch(clearCart());
+  };
 
-  // stripe integration - - - - ----->> 
+  // stripe integration - - - - ----->>
   const onToken = (token) => {
     setStripeToken(token);
   };
 
-
   useEffect(() => {
     const makeRequest = async () => {
       try {
-        const res = await userRequest.post('/payments', {
+        const res = await userRequest.post("/payments", {
           tokenId: stripeToken.id,
           amount: subtotal * 100,
-        })
-        console.log(res)
-        navigate('/success');
+        });
+        console.log(res);
+        navigate("/success");
       } catch (error) {
-        console.log(error)
-        notify('You lost your money! hahaa')
+        console.log(error);
+        notify("You lost your money! hahaa");
       }
-    }
+    };
     stripeToken && makeRequest();
-  }, [stripeToken, subtotal, navigate])
+  }, [stripeToken, subtotal, navigate]);
 
   const handleDecrease = (item) => {
-    dispatch(
-      decreaseQuantity(item)
-    )
-  }
+    dispatch(decreaseQuantity(item));
+  };
   const handleIncrease = (item) => {
-    dispatch(
-      increaseQuantity(item)
-    )
-  }
+    dispatch(increaseQuantity(item));
+  };
 
   return (
     <Container>
       <Title>Your Shopping Cart</Title>
       <Wrapper>
         <Left>
-          {
-            !cartQuantity && <Title style={{ fontSize: "15px" }}>Your Cart is Empty</Title>
-          }
-          {
-            products?.map(item => (
-              <ItemContainer key={item._id}>
-                <Image src={`${BASE_URL}/images/` + item.image} />
-                <ItemInfo>
-                  <ItemTitle>{item.title}.</ItemTitle>
-                  <Price>Rs. {item.price}</Price>
-                </ItemInfo>
-                <Quantity>
-                  <RemoveIcon onClick={() => handleDecrease(item)} />
-                  <ItemCount>{item.quantity}</ItemCount>
-                  <AddIcon onClick={() => handleIncrease(item)}/>
-                </Quantity>
-                <RemoveItem>
-                  <DeleteIcon onClick={() => { handleDelete(item); notify("Item Removed"); }} />
-                </RemoveItem>
-              </ItemContainer>
-            ))
-          }
-          {
-            cartQuantity && <ClearButton onClick={()=>handleClearCart()}>Clear</ClearButton>
-          }
+          {!cartQuantity && (
+            <Title style={{ fontSize: "15px" }}>Your Cart is Empty</Title>
+          )}
+          {products?.map((item) => (
+            <ItemContainer key={item._id}>
+              <Image src={`${BASE_URL}/images/` + item.image} />
+              <ItemInfo>
+                <ItemTitle>{item.title}.</ItemTitle>
+                <Price>Rs. {item.price}</Price>
+              </ItemInfo>
+              <Quantity>
+                <RemoveIcon onClick={() => handleDecrease(item)} />
+                <ItemCount>{item.quantity}</ItemCount>
+                <AddIcon onClick={() => handleIncrease(item)} />
+              </Quantity>
+              <RemoveItem>
+                <DeleteIcon
+                  onClick={() => {
+                    handleDelete(item);
+                    notify("Item Removed");
+                  }}
+                />
+              </RemoveItem>
+            </ItemContainer>
+          ))}
+          {cartQuantity && (
+            <ClearButton onClick={() => handleClearCart()}>Clear</ClearButton>
+          )}
         </Left>
         <Right>
           <Summary>
-            <SummaryTitle>
-              Order Summary
-            </SummaryTitle>
+            <SummaryTitle>Order Summary</SummaryTitle>
             <SummaryInfo>
               <SummaryDetail>
                 <Text>Total items in your cart</Text>
@@ -118,19 +116,25 @@ const Cart = () => {
                 <Text>Subtotal</Text>
                 <Text> {subtotal}</Text>
               </SummaryDetail>
-              {cart.products.length > 0 && <SummaryDetail>
-                <Text>Shipping Charges</Text>
-                <Text> 40</Text>
-              </SummaryDetail>}
-              {
-                cart.products.length > 0 && <SummaryDetail>
+              {cart.products.length > 0 && (
+                <SummaryDetail>
+                  <Text>Shipping Charges</Text>
+                  <Text> 40</Text>
+                </SummaryDetail>
+              )}
+              {cart.products.length > 0 && (
+                <SummaryDetail>
                   <Text>Discount</Text>
                   <Text> -40</Text>
                 </SummaryDetail>
-              }
+              )}
               <SummaryDetail style={{ marginTop: "1.2rem" }}>
-                <Text style={{ fontWeight: "500", fontSize: "20px" }}>Total</Text>
-                <Text style={{ fontWeight: "500", fontSize: "20px" }}>Rs. {subtotal}</Text>
+                <Text style={{ fontWeight: "500", fontSize: "20px" }}>
+                  Total
+                </Text>
+                <Text style={{ fontWeight: "500", fontSize: "20px" }}>
+                  Rs. {subtotal}
+                </Text>
               </SummaryDetail>
             </SummaryInfo>
             {/* <Button>Checkout</Button> */}
@@ -144,22 +148,26 @@ const Cart = () => {
               token={onToken}
               stripeKey={KEY}
             >
-              <Button>CHECKOUT</Button>
+              {isUser && products.length > 0 ? (
+                <Button>CHECKOUT</Button>
+              ) : (
+                <Button disabled>CHECKOUT</Button>
+              )}
             </StripeCheckout>
           </Summary>
         </Right>
       </Wrapper>
     </Container>
-  )
-}
+  );
+};
 
 const Container = styled.div`
-    height: 100vh;
+  height: 100vh;
 
-    @media screen and (max-width: 768px) {
-      height: fit-content;
-    }
-`
+  @media screen and (max-width: 768px) {
+    height: fit-content;
+  }
+`;
 
 const Title = styled.h2`
   color: #e2e2e2;
@@ -167,7 +175,7 @@ const Title = styled.h2`
   font-size: 28px;
   margin: 10px 0;
   text-align: center;
-`
+`;
 
 const Wrapper = styled.div`
   display: flex;
@@ -178,7 +186,7 @@ const Wrapper = styled.div`
   @media screen and (max-width: 768px) {
     flex-direction: column;
   }
-`
+`;
 
 const Left = styled.div`
   width: 100%;
@@ -186,9 +194,9 @@ const Left = styled.div`
   height: 88vh;
   overflow: scroll;
   &::-webkit-scrollbar {
-  display: none;
-}
-`
+    display: none;
+  }
+`;
 
 const ItemContainer = styled.div`
   padding: 1rem;
@@ -202,7 +210,7 @@ const ItemContainer = styled.div`
   @media screen and (max-width: 768px) {
     padding: 10px;
   }
-`
+`;
 
 const Image = styled.img`
   width: 100px;
@@ -210,7 +218,7 @@ const Image = styled.img`
   @media screen and (max-width: 768px) {
     width: 80px;
   }
-`
+`;
 
 const ClearButton = styled.button`
   padding: 10px 18px;
@@ -223,7 +231,7 @@ const ClearButton = styled.button`
   font-weight: 600;
   display: flex;
   margin: 3rem auto;
-`
+`;
 
 const ItemInfo = styled.div`
   margin: 0 10px;
@@ -235,7 +243,7 @@ const ItemInfo = styled.div`
     flex-direction: column;
     gap: 10px;
   }
-`
+`;
 
 const ItemTitle = styled.p`
   color: white;
@@ -244,8 +252,7 @@ const ItemTitle = styled.p`
   @media screen and (max-width: 768px) {
     font-size: 12px;
   }
-
-`
+`;
 
 const Price = styled.p`
   font-size: 20px;
@@ -256,7 +263,7 @@ const Price = styled.p`
   @media screen and (max-width: 768px) {
     font-size: 15px;
   }
-`
+`;
 
 const Quantity = styled.div`
   padding: 1px 5px;
@@ -277,7 +284,7 @@ const Quantity = styled.div`
     width: 60px;
     margin: 0 10px;
   }
-`
+`;
 
 const ItemCount = styled.p`
   width: 100%;
@@ -286,13 +293,13 @@ const ItemCount = styled.p`
   @media screen and (max-width: 768px) {
     width: 15px;
   }
-`
+`;
 
 const RemoveItem = styled.div`
   > * {
     color: white;
   }
-`
+`;
 
 const Right = styled.div`
   flex: 4;
@@ -300,18 +307,18 @@ const Right = styled.div`
   padding: 1rem;
   background-color: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
-`
+`;
 
 const Summary = styled.div`
   display: flex;
   flex-direction: column;
-`
+`;
 
 const SummaryTitle = styled.h2`
   font-size: 2rem;
   font-weight: 300;
   color: white;
-`
+`;
 
 const SummaryInfo = styled.div`
   width: 100%;
@@ -319,7 +326,7 @@ const SummaryInfo = styled.div`
   padding: 10px 10px;
   margin-top: 1rem;
   border-radius: 10px;
-`
+`;
 
 const SummaryDetail = styled.div`
   display: flex;
@@ -327,12 +334,12 @@ const SummaryDetail = styled.div`
   align-items: center;
   gap: 1rem;
   margin: 10px 0;
-`
+`;
 
 const Text = styled.p`
   color: white;
   font-weight: 200;
-`
+`;
 
 const Button = styled.button`
   padding: 8px 16px;
@@ -349,6 +356,6 @@ const Button = styled.button`
   &:hover {
     background-color: #7c108f;
   }
-`
+`;
 
-export default Cart
+export default Cart;
